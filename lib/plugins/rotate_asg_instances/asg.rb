@@ -10,7 +10,21 @@ module Moonshot
       end
 
       def perform_rotation
+        required 'byebug'; byebug
+        puts("perform_rotation     >>>>")
+        asg.set_desired_capacity(asg.desired_capacity + 3,{})
+        if asg.max_capacity < asg.desired_capacity
+          old_max_capacity = asg.max_capacity
+          asg.max_capacity = asg.desired_capacity
+        end
+
         rotate_asg_instances
+
+        asg.set_desired_capacity(asg.desired_capacity - 3,{})
+        if old_max_capacity
+          asg.set_max_capacity(old_max_capacity, {} )
+        end
+
         teardown_outdated_instances
       end
 
